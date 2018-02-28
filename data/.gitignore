@@ -1,3 +1,8 @@
 *.db
 *.db.lock
 *.data
+*.vlog
+*.sst
+LOCK
+MANIFEST
+leveldb
