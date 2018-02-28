@@ -2,19 +2,27 @@ package gkv
 
 import "errors"
 
+// DefaultTableName the default name of table.
+const DefaultTableName = "gkv"
+
+// ErrTableName illegal table name error
+var ErrTableName = errors.New("illegal table name")
+
 // KV short for key-value,
 // interface contains all behaviors for key-value adapter.
 type KV interface {
+	// DB returns the native DB of the adapter.
+	DB() interface{}
 	// Close releases all database resources.
 	Close() error
 	// Register creates a new storage if it doesn't already exist.
 	Register([]byte) error
-	// Put sets the value for a table and key.
-	Put([]byte, []byte, []byte) error
-	// Get retrieves the value for a table and key.
-	Get([]byte, []byte) []byte
-	// Count returns the total number of all the keys for a table.
-	Count([]byte) int
+	// Put sets the value for a key.
+	Put([]byte, []byte) error
+	// Get retrieves the value for a key.
+	Get([]byte) []byte
+	// Count returns the total number of all the keys.
+	Count() int
 }
 
 // Instance is a function create a new KV Instance
@@ -50,25 +58,25 @@ func Close() error {
 }
 
 // Put sets the value for a key.
-func Put(table, key, value []byte) error {
+func Put(key, value []byte) error {
 	if db == nil {
 		return errors.New("the db service is not started")
 	}
-	return db.Put(table, key, value)
+	return db.Put(key, value)
 }
 
 // Get retrieves the value for a key.
-func Get(table, key []byte) []byte {
+func Get(key []byte) []byte {
 	if db == nil {
 		return nil
 	}
-	return db.Get(table, key)
+	return db.Get(key)
 }
 
 // Count returns the total number of all the keys.
-func Count(table []byte) int {
+func Count() int {
 	if db == nil {
 		return 0
 	}
-	return db.Count(table)
+	return db.Count()
 }
