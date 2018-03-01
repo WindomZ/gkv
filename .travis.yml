@@ -1,0 +1,22 @@
+language: go
+
+sudo: false
+
+go: master
+
+before_install:
+  - go get github.com/WindomZ/testify/assert
+  - go get github.com/mattn/goveralls
+  - go get github.com/golang/lint/golint
+  - go get github.com/boltdb/bolt
+  - go get github.com/dgraph-io/badger
+  - go get github.com/syndtr/goleveldb/leveldb
+  - go get github.com/mattn/go-sqlite3
+  - go get github.com/tidwall/buntdb
+
+script:
+  - diff -u <(echo -n) <(gofmt -s -d ./)
+  - diff -u <(echo -n) <(go vet ./...)
+  - diff -u <(echo -n) <(golint ./...)
+  - $(go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -service=travis-ci
+  - go test -v ./...
