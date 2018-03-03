@@ -24,9 +24,13 @@ func Open(paths ...string) gkv.KV {
 	}
 	f, err := os.Stat(path)
 	if err != nil {
-		panic(err)
-	}
-	if !f.IsDir() {
+		if os.IsNotExist(err) {
+			err = os.MkdirAll(path, 0755)
+		}
+		if err != nil {
+			panic(err)
+		}
+	} else if !f.IsDir() {
 		path = filepath.Dir(path)
 	}
 

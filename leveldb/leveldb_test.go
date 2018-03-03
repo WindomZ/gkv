@@ -14,7 +14,7 @@ var (
 )
 
 func TestOpen(t *testing.T) {
-	db := Open("../data/leveldb/")
+	db := Open("../data/leveldb.db")
 	if v, ok := db.(*KV); ok {
 		demo = v
 	}

@@ -5,4 +5,5 @@
 *.sst
 LOCK
 MANIFEST
-leveldb
+badger.db
+leveldb.db
