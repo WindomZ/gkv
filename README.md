@@ -3,6 +3,7 @@
 > gkv is an embeddable, persistent, simple key/value(KV) database adapter for Go.
 
 [![Build Status](https://travis-ci.org/WindomZ/gkv.svg?branch=master)](https://travis-ci.org/WindomZ/gkv)
+[![GoDoc](https://godoc.org/github.com/WindomZ/gkv?status.svg)](https://godoc.org/github.com/WindomZ/gkv)
 
 This package depends on third-party [databases](#databases).
 
@@ -45,6 +46,17 @@ db.Put([]byte("key2"), []byte("value2"))
 demo.Get([]byte("key1"))
 demo.Get([]byte("key2"))
 ```
+
+If you want to switch between different databases, just change `import _ "github.com/WindomZ/gkv/bolt"`.
+
+For example:
+- bolt - `import _ "github.com/WindomZ/gkv/bolt"`
+- badger - `import _ "github.com/WindomZ/gkv/badger"`
+- leveldb - `import _ "github.com/WindomZ/gkv/leveldb"`
+- buntdb - `import _ "github.com/WindomZ/gkv/buntdb"`
+- sqlite3 - `import _ "github.com/WindomZ/gkv/sqlite3"`
+
+Easy to switch, choose the most suitable database.
 
 ## Contributing
 Welcome to pull requests, report bugs, suggest ideas and discuss on [issues page](https://github.com/WindomZ/gkv/issues).
