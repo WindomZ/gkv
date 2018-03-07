@@ -105,6 +105,22 @@ func (kv *KV) Count() (i int) {
 	return
 }
 
+// Iterator creates an iterator for iterating over all the keys.
+func (kv *KV) Iterator(f func([]byte, []byte) bool) error {
+	rows, err := kv.db.Query(
+		fmt.Sprintf("SELECT k, v FROM %s", string(kv.table)),
+	)
+	var k, v []byte
+	for err == nil && rows.Next() {
+		if err = rows.Scan(&k, &v); err == nil {
+			if !f(k, v) {
+				break
+			}
+		}
+	}
+	return err
+}
+
 func init() {
 	gkv.Register(Open)
 }

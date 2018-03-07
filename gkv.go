@@ -23,6 +23,8 @@ type KV interface {
 	Get([]byte) []byte
 	// Count returns the total number of all the keys.
 	Count() int
+	// Iterator creates an iterator for iterating over all the keys.
+	Iterator(func([]byte, []byte) bool) error
 }
 
 // Instance is a function create a new KV Instance
@@ -79,4 +81,12 @@ func Count() int {
 		return 0
 	}
 	return db.Count()
+}
+
+// Iterator creates an iterator for iterating over all the keys.
+func Iterator(f func([]byte, []byte) bool) error {
+	if db == nil {
+		return nil
+	}
+	return db.Iterator(f)
 }

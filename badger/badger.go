@@ -100,6 +100,28 @@ func (kv *KV) Count() (i int) {
 	return
 }
 
+// Iterator creates an iterator for iterating over all the keys.
+func (kv *KV) Iterator(f func([]byte, []byte) bool) error {
+	return kv.db.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.PrefetchSize = 10
+		it := txn.NewIterator(opts)
+		defer it.Close()
+		for it.Rewind(); it.Valid(); it.Next() {
+			item := it.Item()
+			k := item.Key()
+			v, err := item.Value()
+			if err != nil {
+				return err
+			}
+			if !f(k, v) {
+				break
+			}
+		}
+		return nil
+	})
+}
+
 func init() {
 	gkv.Register(Open)
 }

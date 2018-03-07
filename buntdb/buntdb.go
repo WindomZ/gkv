@@ -78,6 +78,16 @@ func (kv *KV) Count() (i int) {
 	return
 }
 
+// Iterator creates an iterator for iterating over all the keys.
+func (kv *KV) Iterator(f func([]byte, []byte) bool) error {
+	return kv.db.View(func(tx *buntdb.Tx) error {
+		err := tx.Ascend("", func(key, value string) bool {
+			return f(gkv.Stob(key), gkv.Stob(value))
+		})
+		return err
+	})
+}
+
 func init() {
 	gkv.Register(Open)
 }

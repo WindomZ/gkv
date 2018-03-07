@@ -1,6 +1,7 @@
 package bolt
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 
@@ -85,6 +86,19 @@ func (kv *KV) Count() (i int) {
 		return nil
 	})
 	return
+}
+
+// Iterator creates an iterator for iterating over all the keys.
+func (kv *KV) Iterator(f func([]byte, []byte) bool) error {
+	return kv.db.View(func(tx *bolt.Tx) error {
+		tx.Bucket(kv.table).ForEach(func(k, v []byte) error {
+			if f(k, v) {
+				return nil
+			}
+			return errors.New("stop")
+		})
+		return nil
+	})
 }
 
 func init() {

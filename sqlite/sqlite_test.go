@@ -40,6 +40,16 @@ func TestCount(t *testing.T) {
 	assert.Equal(t, 1, demo.Count())
 }
 
+func TestIterator(t *testing.T) {
+	cnt := 0
+	assert.NoError(t, demo.Iterator(func(k []byte, v []byte) bool {
+		cnt++
+		return assert.Equal(t, demoKey, k) &&
+			assert.Equal(t, demoValue, v)
+	}))
+	assert.Equal(t, 1, cnt)
+}
+
 func TestClose(t *testing.T) {
 	assert.NoError(t, demo.Close())
 }
