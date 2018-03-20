@@ -76,6 +76,13 @@ func (kv *KV) Get(key []byte) (value []byte) {
 	return
 }
 
+// Delete deletes the given key from the database resources.
+func (kv *KV) Delete(key []byte) error {
+	return kv.db.Update(func(tx *bolt.Tx) error {
+		return tx.Bucket(kv.table).Delete(key)
+	})
+}
+
 // Count returns the total number of all the keys.
 func (kv *KV) Count() (i int) {
 	kv.db.View(func(tx *bolt.Tx) error {
@@ -92,7 +99,7 @@ func (kv *KV) Count() (i int) {
 func (kv *KV) Iterator(f func([]byte, []byte) bool) error {
 	return kv.db.View(func(tx *bolt.Tx) error {
 		tx.Bucket(kv.table).ForEach(func(k, v []byte) error {
-			if f(k, v) {
+			if k == nil || f(k, v) {
 				return nil
 			}
 			return errors.New("stop")

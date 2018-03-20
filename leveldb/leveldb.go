@@ -56,6 +56,11 @@ func (kv *KV) Get(key []byte) (value []byte) {
 	return
 }
 
+// Delete deletes the given key from the database resources.
+func (kv *KV) Delete(key []byte) error {
+	return kv.db.Delete(key, nil)
+}
+
 // Count returns the total number of all the keys.
 func (kv *KV) Count() (i int) {
 	iter := kv.db.NewIterator(nil, nil)

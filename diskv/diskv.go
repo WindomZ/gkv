@@ -70,6 +70,11 @@ func (kv *KV) Get(key []byte) (value []byte) {
 	return
 }
 
+// Delete deletes the given key from the database resources.
+func (kv *KV) Delete(key []byte) error {
+	return kv.db.Erase(gkv.Btos(key))
+}
+
 // Count returns the total number of all the keys.
 func (kv *KV) Count() (i int) {
 	for k := range kv.db.Keys(nil) {

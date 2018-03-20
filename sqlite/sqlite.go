@@ -86,7 +86,11 @@ func (kv *KV) Get(key []byte) (value []byte) {
 		fmt.Sprintf("SELECT v FROM %s WHERE id=? LIMIT 1", string(kv.table)),
 		kv.id(key),
 	)
-	if err == nil && rows.Next() {
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+	if rows.Next() {
 		var s string
 		err = rows.Scan(&s)
 		value = gkv.Stob(s)
@@ -94,12 +98,25 @@ func (kv *KV) Get(key []byte) (value []byte) {
 	return
 }
 
+// Delete deletes the given key from the database resources.
+func (kv *KV) Delete(key []byte) error {
+	_, err := kv.db.Exec(
+		fmt.Sprintf("DELETE FROM %s WHERE id=?", string(kv.table)),
+		kv.id(key),
+	)
+	return err
+}
+
 // Count returns the total number of all the keys.
 func (kv *KV) Count() (i int) {
 	rows, err := kv.db.Query(
 		fmt.Sprintf("SELECT COUNT(*) FROM %s LIMIT 1", string(kv.table)),
 	)
-	if err == nil && rows.Next() {
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+	if rows.Next() {
 		err = rows.Scan(&i)
 	}
 	return
@@ -110,8 +127,12 @@ func (kv *KV) Iterator(f func([]byte, []byte) bool) error {
 	rows, err := kv.db.Query(
 		fmt.Sprintf("SELECT k, v FROM %s", string(kv.table)),
 	)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 	var k, v []byte
-	for err == nil && rows.Next() {
+	for rows.Next() {
 		if err = rows.Scan(&k, &v); err == nil {
 			if !f(k, v) {
 				break

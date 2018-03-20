@@ -21,6 +21,8 @@ type KV interface {
 	Put([]byte, []byte) error
 	// Get retrieves the value for a key.
 	Get([]byte) []byte
+	// Delete deletes the given key from the database resources.
+	Delete([]byte) error
 	// Count returns the total number of all the keys.
 	Count() int
 	// Iterator creates an iterator for iterating over all the keys.
@@ -73,6 +75,14 @@ func Get(key []byte) []byte {
 		return nil
 	}
 	return db.Get(key)
+}
+
+// Delete deletes the given key from the database resources.
+func Delete(key []byte) error {
+	if db == nil {
+		return nil
+	}
+	return db.Delete(key)
 }
 
 // Count returns the total number of all the keys.

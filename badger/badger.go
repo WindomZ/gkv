@@ -85,6 +85,13 @@ func (kv *KV) Get(key []byte) (value []byte) {
 	return
 }
 
+// Delete deletes the given key from the database resources.
+func (kv *KV) Delete(key []byte) error {
+	return kv.db.Update(func(txn *badger.Txn) error {
+		return txn.Delete(key)
+	})
+}
+
 // Count returns the total number of all the keys.
 func (kv *KV) Count() (i int) {
 	kv.db.View(func(txn *badger.Txn) error {
@@ -109,13 +116,14 @@ func (kv *KV) Iterator(f func([]byte, []byte) bool) error {
 		defer it.Close()
 		for it.Rewind(); it.Valid(); it.Next() {
 			item := it.Item()
-			k := item.Key()
-			v, err := item.Value()
-			if err != nil {
-				return err
-			}
-			if !f(k, v) {
-				break
+			if k := item.Key(); k != nil {
+				v, err := item.Value()
+				if err != nil {
+					return err
+				}
+				if !f(k, v) {
+					break
+				}
 			}
 		}
 		return nil

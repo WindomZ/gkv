@@ -50,6 +50,11 @@ func TestIterator(t *testing.T) {
 	assert.Equal(t, 1, cnt)
 }
 
+func TestDelete(t *testing.T) {
+	assert.NoError(t, demo.Delete(demoKey))
+	assert.Equal(t, 0, demo.Count())
+}
+
 func TestClose(t *testing.T) {
 	assert.NoError(t, demo.Close())
 }

@@ -66,6 +66,14 @@ func (kv *KV) Get(key []byte) (value []byte) {
 	return
 }
 
+// Delete deletes the given key from the database resources.
+func (kv *KV) Delete(key []byte) error {
+	return kv.db.Update(func(tx *buntdb.Tx) error {
+		_, err := tx.Delete(gkv.Btos(key))
+		return err
+	})
+}
+
 // Count returns the total number of all the keys.
 func (kv *KV) Count() (i int) {
 	kv.db.View(func(tx *buntdb.Tx) error {
